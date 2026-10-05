@@ -1,0 +1,19 @@
+{
+  "name": "omp-headroom",
+  "version": "0.1.0",
+  "description": "Route OMP model providers through a local Headroom proxy.",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fmguerreiro/omp-headroom.git"
+  },
+  "homepage": "https://github.com/fmguerreiro/omp-headroom#readme",
+  "bugs": "https://github.com/fmguerreiro/omp-headroom/issues",
+  "author": "Filipe Guerreiro",
+  "keywords": ["omp", "oh-my-pi", "headroom", "context-compression"],
+  "omp": {
+    "extensions": ["./headroom.ts"]
+  },
+  "files": ["headroom.ts", "README.md", "LICENSE"]
+}
