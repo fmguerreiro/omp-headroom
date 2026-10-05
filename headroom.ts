@@ -33,11 +33,9 @@ async function start(): Promise<void> {
 			stdio: ["ignore", log, log],
 			env: {
 				...process.env,
-				SSL_CERT_FILE: process.env.SSL_CERT_FILE || join(homedir(), ".config", "gcloud-ca", "combined-ca.pem"),
 				HEADROOM_BEACON: "off",
 				HEADROOM_TELEMETRY: "on",
 				HEADROOM_THINKING_PRESERVING_MUTATIONS: "0",
-				HEADROOM_MODEL_UPSTREAMS: '{"fugu*":"https://api.sakana.ai"}',
 			},
 		});
 		closeSync(log);
@@ -60,9 +58,17 @@ async function start(): Promise<void> {
 export default async function headroom(pi: ExtensionAPI): Promise<void> {
 	if (!(await healthy())) await start();
 
-	process.env.ANTHROPIC_BASE_URL = proxy;
-	process.env.ENABLE_TOOL_SEARCH = "true";
-	pi.registerProvider("sakana", { baseUrl: `${proxy}/v1` });
-	pi.registerProvider("openai-codex", { baseUrl: `${proxy}/v1` });
-	pi.registerProvider("anthropic", { baseUrl: proxy });
+	const providerUrls = process.env.OMP_HEADROOM_PROVIDER_URLS;
+	if (!providerUrls) return;
+
+	const parsed: unknown = JSON.parse(providerUrls);
+	if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+		fail("OMP_HEADROOM_PROVIDER_URLS must be a JSON object");
+	}
+	for (const [name, baseUrl] of Object.entries(parsed)) {
+		if (typeof baseUrl !== "string") {
+			fail(`OMP_HEADROOM_PROVIDER_URLS.${name} must be a URL string`);
+		}
+		pi.registerProvider(name, { baseUrl });
+	}
 }

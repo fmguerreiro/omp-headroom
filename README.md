@@ -1,6 +1,6 @@
 # omp-headroom
 
-Routes [Oh My Pi (OMP)](https://oh-my-pi.dev) model requests through a local [Headroom](https://github.com/headroomlabs-ai/headroom) proxy. Starts Headroom on demand, then routes `sakana`, `openai-codex`, and `anthropic` providers through it. This package targets OMP; [`pi-headroom`](https://github.com/fmguerreiro/pi-headroom) targets upstream Pi.
+Routes [Oh My Pi (OMP)](https://oh-my-pi.dev) model requests through a local [Headroom](https://github.com/headroomlabs-ai/headroom) proxy. Starts Headroom on demand. This package targets OMP; [`pi-headroom`](https://github.com/fmguerreiro/pi-headroom) targets upstream Pi.
 
 ## Install
 
@@ -19,9 +19,19 @@ For local development, use `omp plugin link /path/to/omp-headroom` instead. Remo
 | --- | --- |
 | `OMP_HEADROOM_URL` | Proxy URL; default `http://127.0.0.1:8787`. |
 | `OMP_HEADROOM_PORT` | Default proxy port when `OMP_HEADROOM_URL` is unset; default `8787`. |
-| `SSL_CERT_FILE` | Passed to Headroom on startup. If unset, defaults to `~/.config/gcloud-ca/combined-ca.pem` for the local corporate certificate authority. Override it if your trust bundle lives elsewhere. |
+| `OMP_HEADROOM_PROVIDER_URLS` | Optional JSON object mapping existing OMP provider names to their Headroom base URLs. Unset by default, so plugin does not change provider routing. |
+| `SSL_CERT_FILE` | Optional CA bundle passed through to Headroom unchanged. |
 
-The launcher binds only to `127.0.0.1`, writes startup output to `~/.headroom/logs/launcher.log`, and configures Headroom's `fugu*` upstream as `https://api.sakana.ai`. A proxy already responding at the configured URL is reused; startup settings only apply when this extension launches a new proxy.
+Set `OMP_HEADROOM_PROVIDER_URLS` only for providers you want routed through Headroom. OMP keeps every other provider's user configuration.
+
+```sh
+export OMP_HEADROOM_PROVIDER_URLS='{
+  "anthropic": "http://127.0.0.1:8787",
+  "openai": "http://127.0.0.1:8787/v1"
+}'
+```
+
+The launcher binds only to `127.0.0.1` and writes startup output to `~/.headroom/logs/launcher.log`. A proxy already responding at the configured URL is reused; startup settings only apply when this extension launches a new proxy.
 
 ## Check
 
