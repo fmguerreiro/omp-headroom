@@ -1,3 +1,5 @@
+<p align="center"><img src="icon.webp" alt="omp-headroom icon" width="160"></p>
+
 # omp-headroom
 
 Routes [Oh My Pi (OMP)](https://oh-my-pi.dev) model requests through a local [Headroom](https://github.com/headroomlabs-ai/headroom) proxy. Starts Headroom on demand. This package targets OMP; [`pi-headroom`](https://github.com/fmguerreiro/pi-headroom) targets upstream Pi.
